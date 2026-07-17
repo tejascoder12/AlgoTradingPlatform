@@ -86,17 +86,6 @@ AlgoTrading/
 │   └── AlgoTrading.API/          #   controllers, SignalR hub, DI (reads DB/Redis only)
 ├── tests/AlgoTrading.Tests/      # xUnit
 └── trading-engine/               # Python real-time engine (the hot path)
-    ├── main.py                   #   engine entrypoint (skeleton)
-    ├── run_paper.py              #   the live paper-trading loop (the strategy)
-    ├── smoke_test.py             #   broker + data connectivity check
-    ├── start_engine.ps1          #   Task Scheduler launcher (logs to logs/)
-    └── engine/
-        ├── connectors/           #   broker adapters (Angel One, Upstox, ...) + interfaces
-        ├── strategy/             #   indicators, confluence, OI, context, expiry rules
-        ├── risk/                 #   risk_manager.py — the hard risk gate
-        ├── storage/              #   async TimescaleDB + Redis writers
-        ├── reporting/            #   end-of-session report
-        └── ml/                   #   features / model / retrain (Phase 2 scaffold)
 
 # Frontend lives separately at ../FE/Angular  (Angular 19 dashboard)
 ```
@@ -105,46 +94,25 @@ AlgoTrading/
 
 ## 5. The strategy (confluence, intraday Nifty options)
 
-The engine trades **only when multiple independent signals align** — and sits out otherwise.
-Every gate below must pass to enter; a blocked entry is logged with the failing reason.
+The engine trades **only when multiple independent signals align across
+timeframes** — a higher-timeframe trend filter combined with lower-timeframe
+entry timing — and **sits out otherwise**. Every decision, including each
+sit-out and its reason, is logged as labelled data.
 
-### Multi-timeframe
-- **5-minute trend** (higher timeframe) via a **stacked EMA 9 / 15 / 20** —
-  `direction` (EMA9 vs EMA20, responsive) + `strength` (fully stacked = strong).
-- **1-minute** for precise entry timing (EMA15, RSI14, ATR, candle body).
-- **Rule:** only take CE (long) when the 5m trend is up, PE (short) when down — never fight the higher timeframe.
+**Signals combined into the confluence gate:** trend, momentum, candle
+structure, support/resistance (chart levels + open-interest walls), volume,
+and volatility (IV) — plus key reference levels and high-liquidity time windows.
 
-### Entry gates (all must align)
-1. **5m trend direction** (trade with it)
-2. **Momentum** ≥ 0.6× ATR (adaptive, not a fixed number)
-3. **Candle** direction with a real body (≥ 50%)
-4. **RSI** in-band (50–72 for CE, 28–50 for PE — strong, not exhausted)
-5. **S/R room** — don't buy *into* a level (needs ≥ 0.6× ATR of room)
-6. **Volume flow** above its rolling average
-7. **OI structure** — PCR + OI walls (support/resistance from open interest)
-8. **Key levels** — previous day/week/month close + today's 09:15–09:30 opening-range high/low
-9. **Time window** — high-liquidity windows, or a confirmed 5m trend + volume
-10. **Risk gate** — final veto (per-trade cap, daily halt, max positions)
+**Exits** use structure-based profit targets with a trailing profit-lock, and
+adapt between **trend-riding** and **scalping** modes depending on market
+conditions.
 
-### Exit logic
-- **Structure target** — the next resistance (CE) / support (PE), sized via option delta.
-- **Profit-lock trail** — protects gains once up (beats whipsaws).
-- **RUNNER mode** — on a *strong* 5m trend **or IV expansion**, ride for a **big target** with a wide trail (don't scalp a real trend small).
-- **SCALP mode** — chop / weak trend: tight stop, quick target, fast theta exit.
-- Plus: hard premium stop, RSI exhaustion, structure break, 5m-weakening, EOD square-off.
+**Risk** is dynamic: position size scales with conviction, volatility and the
+remaining daily budget, with hard per-trade and daily caps, brokerage-aware
+P&L, and no overnight holds. A dedicated risk manager holds the final veto.
 
-### Volatility / IV signal
-- **IV expansion** — when the spot is flat but the **ATM straddle is rising**, premiums are building on vega → a big move is brewing → the next entry is promoted to a runner.
-
-### Expiry-day rules (DTE = 0)
-- 13:00–15:20 = strict scalp window (cheap premiums, sharp moves), faster exits, tighter theta cut.
-
-### Risk management (dynamic)
-- Per-trade risk **scaled by conviction (5m strength) × volatility (VIX) × remaining daily budget**.
-- Position **sized from the risk budget** (`lots = risk_budget ÷ risk_per_lot`).
-- Realistic **brokerage-aware P&L**, minimum net-profit floor.
-- **Hard caps** (configurable in `.env`): per-trade %, daily loss halt, max open positions, no overnight holds.
-- The risk manager is the **final authority** — it can veto any order.
+> The specific gates, thresholds, indicator periods and parameters are kept
+> private — this repository shows the *architecture*, not the edge.
 
 ---
 
