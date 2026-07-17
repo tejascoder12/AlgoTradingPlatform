@@ -1,0 +1,42 @@
+<section class="trades">
+  <h1>Trades</h1>
+
+  @if (loading()) {
+    <p class="muted">Loading…</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else if (trades().length === 0) {
+    <p class="muted">No trades for today yet.</p>
+  } @else {
+    <table class="trades__table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Symbol</th>
+          <th>Side</th>
+          <th>Entry</th>
+          <th>Exit</th>
+          <th>Qty</th>
+          <th>P&amp;L</th>
+          <th>Setup</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (t of trades(); track t.id) {
+          <tr>
+            <td>{{ t.id }}</td>
+            <td>{{ t.symbol }}</td>
+            <td>{{ t.side }}</td>
+            <td>{{ t.entryPrice | currencyInr }}</td>
+            <td>{{ t.exitPrice | currencyInr }}</td>
+            <td>{{ t.qty }}</td>
+            <td [class]="t.pnl | pnlColor">{{ t.pnl | currencyInr }}</td>
+            <td>{{ t.setupName ?? '—' }}</td>
+            <td>{{ t.isOpen ? 'OPEN' : 'CLOSED' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

@@ -1,0 +1,78 @@
+# ============================================================
+#  SECRETS — NEVER COMMIT (public repo!)
+# ============================================================
+.env
+.env.*
+!.env.example
+*.env
+secrets.json
+appsettings.*.local.json
+**/appsettings.Development.json
+**/appsettings.Production.json
+
+# Engine run logs (may contain trade data)
+logs/
+*.log
+
+# ============================================================
+#  PRIVATE STRATEGY — the edge. Never publish (public repo!)
+#  NOTE: .gitignore only stops FUTURE commits. Files already tracked
+#  must be untracked with:  git rm --cached <file>
+# ============================================================
+trading-engine/run_paper.py
+trading-engine/backtest.py
+trading-engine/analyze_peaks.py
+trading-engine/engine/strategy/confluence.py
+trading-engine/engine/strategy/expiry_rules.py
+trading-engine/engine/strategy/oi_analysis.py
+trading-engine/engine/strategy/context.py
+trading-engine/engine/risk/risk_manager.py
+
+# ============================================================
+#  .NET
+# ============================================================
+bin/
+obj/
+*.user
+*.suo
+[Dd]ebug/
+[Rr]elease/
+
+# ============================================================
+#  Python
+# ============================================================
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# ML model artifacts (retrained locally / nightly)
+*.pkl
+*.joblib
+*.model
+*.xgb
+
+# ============================================================
+#  Node / Angular (frontend)
+# ============================================================
+node_modules/
+dist/
+.angular/
+*.tsbuildinfo
+
+# ============================================================
+#  IDE / OS
+# ============================================================
+.vs/
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+.DS_Store
+Thumbs.db
+
+trading-engine/tests/

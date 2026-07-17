@@ -1,0 +1,25 @@
+.trades {
+  padding: 1.5rem;
+
+  h1 { font-size: 1.4rem; margin-bottom: 1rem; }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+
+    th, td {
+      text-align: left;
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid #262a33;
+    }
+
+    th { color: #9aa4b2; text-transform: uppercase; font-size: 0.72rem; }
+  }
+}
+
+.pnl-positive { color: #4ade80; }
+.pnl-negative { color: #f87171; }
+.pnl-neutral  { color: #e5e7eb; }
+.muted { color: #9aa4b2; }
+.error { color: #f87171; }

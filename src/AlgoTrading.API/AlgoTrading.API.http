@@ -1,0 +1,17 @@
+@AlgoTrading.API_HostAddress = http://localhost:5014
+
+### Dashboard P&L summary (Round 1 vertical slice)
+GET {{AlgoTrading.API_HostAddress}}/api/dashboard/pnl-summary
+Accept: application/json
+
+### Engine LIVE/OFFLINE status (from Redis heartbeat)
+GET {{AlgoTrading.API_HostAddress}}/api/dashboard/engine-status
+Accept: application/json
+
+### Trades for today
+GET {{AlgoTrading.API_HostAddress}}/api/trades
+Accept: application/json
+
+### Recent candles
+GET {{AlgoTrading.API_HostAddress}}/api/marketdata/candles?symbol=NIFTY&interval=1m&limit=200
+Accept: application/json

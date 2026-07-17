@@ -1,0 +1,28 @@
+.app-shell {
+  min-height: 100vh;
+  background: #0d0f14;
+  color: #e5e7eb;
+}
+
+.app-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0.9rem 1.5rem;
+  background: #12141a;
+  border-bottom: 1px solid #262a33;
+
+  &__brand {
+    font-weight: 700;
+    margin-right: 0.5rem;
+  }
+
+  a {
+    color: #9aa4b2;
+    text-decoration: none;
+    font-size: 0.95rem;
+
+    &.active { color: #4ade80; font-weight: 600; }
+    &:hover { color: #e5e7eb; }
+  }
+}

@@ -1,0 +1,7 @@
+<section class="charts">
+  <h1>Charts — {{ symbol() }}</h1>
+  @if (error()) {
+    <p class="muted">{{ error() }}</p>
+  }
+  <div #chartContainer class="charts__container"></div>
+</section>

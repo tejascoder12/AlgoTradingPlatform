@@ -1,0 +1,14 @@
+.charts {
+  padding: 1.5rem;
+
+  h1 { font-size: 1.4rem; margin-bottom: 1rem; }
+
+  &__container {
+    width: 100%;
+    height: 480px;
+    border: 1px solid #262a33;
+    border-radius: 12px;
+  }
+}
+
+.muted { color: #9aa4b2; margin-bottom: 0.75rem; }

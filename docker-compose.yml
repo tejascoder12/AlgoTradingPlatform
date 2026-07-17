@@ -1,0 +1,47 @@
+# Algo Trading Platform — local DB stack
+# Brings up TimescaleDB (Postgres + time-series) and Redis.
+#
+# Start:   docker-compose up -d
+# Stop:    docker-compose down
+# Reset:   docker-compose down -v   (wipes all data)
+#
+# Connection (matches AlgoTrading.API/appsettings.json):
+#   Host=localhost; Port=5432; Database=algotrading; Username=algo; Password=algo_dev_pwd
+#   Redis: localhost:6379
+
+services:
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
+    container_name: algo_timescaledb
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: algo
+      POSTGRES_PASSWORD: algo_dev_pwd
+      POSTGRES_DB: algotrading
+    ports:
+      - "5432:5432"
+    volumes:
+      - timescale_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U algo -d algotrading"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: algo_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  timescale_data:
+  redis_data:

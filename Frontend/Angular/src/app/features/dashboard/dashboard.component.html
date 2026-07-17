@@ -1,0 +1,109 @@
+<section class="dashboard">
+  <header class="dashboard__header">
+    <h1>Algo Trading — Dashboard</h1>
+    <span
+      class="engine-badge"
+      [class.online]="engine()?.isOnline"
+      [class.offline]="!engine()?.isOnline">
+      {{ engine()?.isOnline ? 'ENGINE LIVE' : 'ENGINE OFFLINE' }}
+    </span>
+  </header>
+
+  @if (today(); as t) {
+    <div class="session">
+      <div class="session__header">
+        <h2>Today's Session</h2>
+        <span class="muted">{{ t.sessionDate | date:'EEE, d MMM y' }}</span>
+      </div>
+
+      @if (t.hasTraded) {
+        <div class="cards">
+          <div class="card">
+            <span class="card__label">Today's P&amp;L</span>
+            <span class="card__value" [class]="t.grossPnl | pnlColor">{{ t.grossPnl | currencyInr }}</span>
+          </div>
+          <div class="card">
+            <span class="card__label">Today's Realized</span>
+            <span class="card__value" [class]="t.realizedPnl | pnlColor">{{ t.realizedPnl | currencyInr }}</span>
+          </div>
+          <div class="card">
+            <span class="card__label">Today's Win Rate</span>
+            <span class="card__value">{{ (t.winRate * 100) | number:'1.0-1' }}%</span>
+          </div>
+          <div class="card">
+            <span class="card__label">Today's Trades</span>
+            <span class="card__value">{{ t.totalTrades }}</span>
+          </div>
+          <div class="card">
+            <span class="card__label">Open Now</span>
+            <span class="card__value">{{ t.openPositions }}</span>
+          </div>
+          <div class="card">
+            <span class="card__label">Wins / Losses</span>
+            <span class="card__value">{{ t.wins }} / {{ t.losses }}</span>
+          </div>
+          <div class="card">
+            <span class="card__label">Best Trade Today</span>
+            <span class="card__value pnl-positive">{{ t.bestTradePnl | currencyInr }}</span>
+            @if (t.bestTradeSymbol) {
+              <span class="card__sub">{{ t.bestTradeSymbol }}</span>
+            }
+          </div>
+          <div class="card">
+            <span class="card__label">Worst Trade Today</span>
+            <span class="card__value pnl-negative">{{ t.worstTradePnl | currencyInr }}</span>
+            @if (t.worstTradeSymbol) {
+              <span class="card__sub">{{ t.worstTradeSymbol }}</span>
+            }
+          </div>
+        </div>
+      } @else {
+        <p class="muted">No trades taken today yet.</p>
+      }
+    </div>
+  }
+
+  @if (loading()) {
+    <p class="muted">Loading…</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else if (summary()) {
+    @if (summary(); as s) {
+    <h2 class="section-title">All Time</h2>
+    <div class="cards">
+      <div class="card">
+        <span class="card__label">Gross P&amp;L</span>
+        <span class="card__value" [class]="s.grossPnl | pnlColor">{{ s.grossPnl | currencyInr }}</span>
+      </div>
+      <div class="card">
+        <span class="card__label">Realized P&amp;L</span>
+        <span class="card__value" [class]="s.realizedPnl | pnlColor">{{ s.realizedPnl | currencyInr }}</span>
+      </div>
+      <div class="card">
+        <span class="card__label">Win Rate</span>
+        <span class="card__value">{{ (s.winRate * 100) | number:'1.0-1' }}%</span>
+      </div>
+      <div class="card">
+        <span class="card__label">Trades</span>
+        <span class="card__value">{{ s.totalTrades }}</span>
+      </div>
+      <div class="card">
+        <span class="card__label">Open Positions</span>
+        <span class="card__value">{{ s.openPositions }}</span>
+      </div>
+      <div class="card">
+        <span class="card__label">Wins / Losses</span>
+        <span class="card__value">{{ s.wins }} / {{ s.losses }}</span>
+      </div>
+      <div class="card">
+        <span class="card__label">Best Trade</span>
+        <span class="card__value pnl-positive">{{ s.bestTradePnl | currencyInr }}</span>
+      </div>
+      <div class="card">
+        <span class="card__label">Worst Trade</span>
+        <span class="card__value pnl-negative">{{ s.worstTradePnl | currencyInr }}</span>
+      </div>
+    </div>
+    }
+  }
+</section>

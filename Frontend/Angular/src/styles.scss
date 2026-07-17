@@ -1,0 +1,16 @@
+/* Global styles */
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: #0d0f14;
+  color: #e5e7eb;
+}
+
+/* Shared P&L color helpers (used by pnlColor pipe output). */
+.pnl-positive { color: #4ade80; }
+.pnl-negative { color: #f87171; }
+.pnl-neutral  { color: #e5e7eb; }
